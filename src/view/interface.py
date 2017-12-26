@@ -1,8 +1,7 @@
 from Tkinter import *
 from random import randint
-
+import os
 from PIL import ImageTk, Image
-
 import src.controller.controller_functions as cf
 
 
@@ -40,8 +39,10 @@ class Application(Frame):
         Method to instantiate and initialize every component in the application view.
         """
 
-        path = "C:\\Users\\Andres\\Documents\\UNAM\\Ciencias de la Computacion\\7mo semestre\\Redes de " \
-               "computadoras\\Proyecto 2\\images\\qtn.png"
+        three_up = os.path.abspath(os.path.join(__file__, "../../.."))
+        images_path = os.path.join(three_up, "images")
+
+        path = os.path.join(images_path, "qtn.png")
 
         # Message to display
         self.message = Label(text="A wild Pokemon appeared!")

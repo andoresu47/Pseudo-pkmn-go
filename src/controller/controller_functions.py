@@ -1,4 +1,5 @@
 import pandas as pd
+import os
 
 from src.db_stuff.database_connection import DatabaseUpload, DatabaseException
 
@@ -11,8 +12,9 @@ def populate_pokemon():
     db_connection = DatabaseUpload()
     db_connection.connect()
 
-    images_path = "C:\\Users\\Andres\\Documents\\UNAM\\Ciencias de la Computacion\\7mo semestre\\Redes de " \
-                  "computadoras\\Proyecto 2\\images\\"
+    three_up = os.path.abspath(os.path.join(__file__, "../../.."))
+    images_path = os.path.join(three_up, "images")
+
     df = pd.read_csv("../images/name_pokedex.csv", sep=',', header=None, index_col=0)
 
     for row in df.itertuples():
