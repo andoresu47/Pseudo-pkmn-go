@@ -321,3 +321,20 @@ class DatabaseUpload:
         except Exception as e:
             self.conn.rollback()
             print("Couldn't retrieve pokemon's name: " + str(e))
+
+    def get_password(self, username):
+        self.cur = self.conn.cursor()
+        try:
+            self.cur.execute("""SELECT password
+                                FROM Usuario
+                                WHERE nombre = '{0}'""".format(username))
+            res = self.cur.fetchone()
+            self.cur.close()
+            if res is not None:
+                return res[0]
+            else:
+                raise DatabaseException("User not found.")
+
+        except Exception as e:
+            self.conn.rollback()
+            print("Couldn't retrieve password: " + str(e))
