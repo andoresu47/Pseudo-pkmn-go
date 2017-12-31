@@ -109,9 +109,19 @@ class OptionsPage(tk.Frame):
         self.controller = controller
         label = tk.Label(self, text="Options", font=controller.title_font)
         label.pack(side="top", fill="x", pady=10)
-        button = tk.Button(self, text="Capture",
+        button = tk.Button(self, text="Capture", width=8,
                            command=lambda: controller.show_frame("CapturePage"))
         button.pack()
+
+        self.logout_button = tk.Button(self, text="Logout", width=8, command=self.logout)
+        self.logout_button.pack()
+
+        quit_button = tk.Button(self, text="Quit", fg='red', width=8, command=self.quit)
+        quit_button.pack(pady=(0, 10))
+
+    def logout(self):
+        self.controller.show_frame("LoginPage")
+        tm.showinfo("Logout info", "Logged out")
 
 
 class CapturePage(tk.Frame):
