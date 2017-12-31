@@ -125,18 +125,22 @@ class CapturePage(tk.Frame):
         path = os.path.join(images_path, "qtn.png")
 
         self.message = tk.Label(self, text="A wild Pokemon appeared!")
-        self.message.pack()
+        self.message.pack(side="top")
 
         # Question mark image to indicate a wild pokemon appeared
         self.image = ImageTk.PhotoImage(Image.open(path))
         self.panel = tk.Label(self, image=self.image)
-        self.panel.pack(side="bottom", fill="both", expand="yes", pady=7)
+        self.panel.pack(side="top", fill="both", expand="yes", pady=5)
 
-        self.capture_button = tk.Button(self, text="Capture", width=7, command=self.capture_pokemon)
-        self.capture_button.pack()
+        self.capture_button = tk.Button(self, text="Capture", width=8, command=self.capture_pokemon)
+        self.capture_button.pack(side="left")
 
-        self.QUIT = tk.Button(self, text="Quit", fg='red', width=7, command=self.quit)
-        self.QUIT.pack()
+        self.return_button = tk.Button(self, text="Go back", width=8,
+                                       command=lambda: controller.show_frame("OptionsPage"))
+        self.return_button.pack(side="left")
+
+        self.QUIT = tk.Button(self, text="Quit", fg='red', width=8, command=self.quit)
+        self.QUIT.pack(side="left")
 
     def capture_pokemon(self):
         """
