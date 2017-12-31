@@ -337,4 +337,4 @@ class DatabaseUpload:
 
         except Exception as e:
             self.conn.rollback()
-            print("Couldn't retrieve password: " + str(e))
+            raise DatabaseException("Couldn't retrieve password")
