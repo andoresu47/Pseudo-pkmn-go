@@ -4,6 +4,14 @@ from passlib.hash import pbkdf2_sha256
 from src.db_stuff.database_connection import DatabaseUpload, DatabaseException
 
 
+class UserNotRegisteredException(Exception):
+    """Class for managing database exceptions.
+
+    """
+
+    pass
+
+
 def populate_pokemon():
     """
     Function to populate database with the 151 first-generation pokemon.
@@ -103,6 +111,7 @@ def login(username, password):
 
     except DatabaseException as e:
         print "Could not login."
+        raise UserNotRegisteredException()
 
     finally:
         db_connection.disconnect()
