@@ -241,7 +241,6 @@ if __name__ == '__main__':
         print("¡ POKEMON ATRAPADO!\n Finalizando la conexion")
         cl.poke_recibido_c8(False)
 
-
     elif res[0] == 23:  # se terminaron los reintentos
         print("Intentos agotados, ¡vamos por otro poke!")
         print("No queremos capturar al pokemon " + str(cl.solicita_poke_c2()))

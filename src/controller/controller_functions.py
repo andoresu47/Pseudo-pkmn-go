@@ -133,7 +133,7 @@ def capture(username, pokemon):
         db_connection.capture_pokemon(username, pokemon.lower())
 
     except DatabaseException as e:
-        print "Could not capture pokemon"
+        print "Pokemon already owned."
 
     finally:
         db_connection.disconnect()
@@ -218,7 +218,7 @@ if __name__ == '__main__':
     # populate_pokemon()
     # register_user("redes6", "pass6")
     # capture("redes2", "bulbasaur")
-    # print query_pokemon("redes2")
+    print query_pokemon("redes6")
     # print get_image(1)
     # print get_pokemon_name(1)
-    print login("redes6", "pass6")
+    # print login("redes6", "pass6")

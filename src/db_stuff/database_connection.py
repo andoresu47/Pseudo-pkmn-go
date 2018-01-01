@@ -323,6 +323,15 @@ class DatabaseUpload:
             print("Couldn't retrieve pokemon's name: " + str(e))
 
     def get_password(self, username):
+        """Method for getting a user's password.
+
+        Args:
+            username (str): name of user.
+
+        Returns:
+            str: user's password.
+        """
+
         self.cur = self.conn.cursor()
         try:
             self.cur.execute("""SELECT password

@@ -46,14 +46,24 @@ class Application(tk.Tk):
         self.show_frame("StartPage")
 
     def show_frame(self, page_name):
-        """Show a frame for the given page name"""
+        """
+        Function to show a frame for the given page name
+        """
 
         frame = self.frames[page_name]
         frame.tkraise()
 
 
 class StartPage(tk.Frame):
+    """
+    Class to handle the behaviour of the starting page.
+    """
+
     def __init__(self, parent, controller):
+        """
+        Class constructor.
+        """
+
         tk.Frame.__init__(self, parent)
         self.controller = controller
         label = tk.Label(self, text="Pokemon-Go!", font=controller.title_font)
@@ -70,7 +80,14 @@ class StartPage(tk.Frame):
 
 
 class LoginPage(tk.Frame):
+    """
+    Class to handle the behaviour of the login page.
+    """
+
     def __init__(self, parent, controller):
+        """
+        Class constructor.
+        """
         tk.Frame.__init__(self, parent)
         self.controller = controller
 
@@ -91,6 +108,10 @@ class LoginPage(tk.Frame):
         self.pack()
 
     def _login_btn_clickked(self):
+        """
+        Method to determine how to react to correct or incorrect credentials respectively.
+        """
+
         username = self.entry_1.get()
         password = self.entry_2.get()
 
@@ -108,6 +129,10 @@ class LoginPage(tk.Frame):
 
 
 class OptionsPage(tk.Frame):
+    """
+    Class to handle the behaviour of the options page.
+    """
+
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
         self.controller = controller
@@ -128,16 +153,27 @@ class OptionsPage(tk.Frame):
         quit_button.pack(pady=(0, 10))
 
     def logout(self):
+        """
+        Method to show a pop up window upon logging out.
+        """
         self.controller.show_frame("LoginPage")
         tm.showinfo("Logout info", "Logged out")
 
     def pokedex_option_clicked(self):
+        """
+        Method to handle the behaviour of the pokedex button upon clicking.
+        """
+
         initial = self.controller.pokedex_accessed.get()
         self.controller.pokedex_accessed.set(initial + 1)
         self.controller.show_frame("PokedexPage")
 
 
 class PokedexPage(tk.Frame):
+    """
+    Class to handle the behaviour of the pokedex page.
+    """
+
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
         self.controller = controller
@@ -164,6 +200,11 @@ class PokedexPage(tk.Frame):
         self.scrollbar.config(command=self.L.yview)
 
     def display_pokedex(self, *ignore):
+        """
+        Method to retrieve pokemon id's from database given the currently logged user,
+        and display them on screen.
+        """
+
         self.L.delete(0, tk.END)
         pokedex = cf.query_pokemon(self.controller.session.get())
         for number in pokedex:
@@ -174,11 +215,19 @@ class PokedexPage(tk.Frame):
             self.L.insert(tk.END, name)
 
     def list_entry_clicked(self, *ignore):
+        """
+        Method to show the image corresponding to the selected pokemon from pokedex.
+        """
+
         pokemon_name = self.L.get(self.L.curselection()[0])
         self.img.config(image=self.images_dict[pokemon_name])
 
 
 class CapturePage(tk.Frame):
+    """
+    Class to handle the behaviour of the capture pokemon page.
+    """
+
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
         self.controller = controller
@@ -226,6 +275,10 @@ class CapturePage(tk.Frame):
         cf.capture(username, pok_name)
 
     def reset_view_and_return(self):
+        """
+        Method to reset the capture pokemon page to default view.
+        """
+
         three_up = os.path.abspath(os.path.join(__file__, "../../.."))
         images_path = os.path.join(three_up, "images")
 
