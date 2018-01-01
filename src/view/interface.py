@@ -22,7 +22,7 @@ class Application(tk.Tk):
 
         self.title_font = tkfont.Font(family='Helvetica', size=18, weight="bold", slant="italic")
         self.session = tk.StringVar()
-        self.poke_amount = tk.IntVar()
+        self.pokedex_accessed = tk.IntVar()
 
         # the container is where we'll stack a bunch of frames
         # on top of each other, then the one we want visible
@@ -118,7 +118,7 @@ class OptionsPage(tk.Frame):
         button.pack()
 
         pokedex_button = tk.Button(self, text="Pokedex", width=8,
-                                   command=lambda: controller.show_frame("PokedexPage"))
+                                   command=self.pokedex_option_clicked)
         pokedex_button.pack()
 
         self.logout_button = tk.Button(self, text="Logout", width=8, command=self.logout)
@@ -130,6 +130,11 @@ class OptionsPage(tk.Frame):
     def logout(self):
         self.controller.show_frame("LoginPage")
         tm.showinfo("Logout info", "Logged out")
+
+    def pokedex_option_clicked(self):
+        initial = self.controller.pokedex_accessed.get()
+        self.controller.pokedex_accessed.set(initial + 1)
+        self.controller.show_frame("PokedexPage")
 
 
 class PokedexPage(tk.Frame):
@@ -147,8 +152,8 @@ class PokedexPage(tk.Frame):
         self.L = tk.Listbox(self, selectmode=tk.SINGLE)
         self.images_dict = {}
 
-        self.controller.session.trace('w', self.display_pokedex)
-        self.controller.poke_amount.trace('w', self.display_pokedex)
+        # self.controller.session.trace('w', self.display_pokedex)
+        self.controller.pokedex_accessed.trace('w', self.display_pokedex)
 
         self.L.pack()
         self.img = tk.Label(self)
@@ -207,7 +212,6 @@ class CapturePage(tk.Frame):
         """
 
         username = self.controller.session.get()
-        poke_amount = self.controller.poke_amount.get()
 
         rand_pokemon = randint(1, 151)
         path = cf.get_image(rand_pokemon)
@@ -220,7 +224,6 @@ class CapturePage(tk.Frame):
         self.panel.image = img
 
         cf.capture(username, pok_name)
-        self.controller.poke_amount.set(poke_amount + 1)
 
     def reset_view_and_return(self):
         three_up = os.path.abspath(os.path.join(__file__, "../../.."))
