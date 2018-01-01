@@ -21,6 +21,8 @@ class Application(tk.Tk):
         tk.Tk.__init__(self, *args, **kwargs)
 
         self.title_font = tkfont.Font(family='Helvetica', size=18, weight="bold", slant="italic")
+        self.session = tk.StringVar()
+        self.poke_amount = tk.IntVar()
 
         # the container is where we'll stack a bunch of frames
         # on top of each other, then the one we want visible
@@ -31,7 +33,7 @@ class Application(tk.Tk):
         container.grid_columnconfigure(0, weight=1)
 
         self.frames = {}
-        for F in (LoginPage, StartPage, OptionsPage, CapturePage):
+        for F in (LoginPage, StartPage, OptionsPage, CapturePage, PokedexPage):
             page_name = F.__name__
             frame = F(parent=container, controller=self)
             self.frames[page_name] = frame
@@ -95,6 +97,7 @@ class LoginPage(tk.Frame):
             verif = cf.login(username, password)
             if verif:
                 self.controller.show_frame("OptionsPage")
+                self.controller.session.set(username)
                 tm.showinfo("Login info", "Welcome {0}".format(username))
             else:
                 tm.showerror("Login error", "Incorrect username or password")
@@ -113,6 +116,10 @@ class OptionsPage(tk.Frame):
                            command=lambda: controller.show_frame("CapturePage"))
         button.pack()
 
+        pokedex_button = tk.Button(self, text="Pokedex", width=8,
+                                   command=lambda: controller.show_frame("PokedexPage"))
+        pokedex_button.pack()
+
         self.logout_button = tk.Button(self, text="Logout", width=8, command=self.logout)
         self.logout_button.pack()
 
@@ -122,6 +129,41 @@ class OptionsPage(tk.Frame):
     def logout(self):
         self.controller.show_frame("LoginPage")
         tm.showinfo("Logout info", "Logged out")
+
+
+class PokedexPage(tk.Frame):
+    def __init__(self, parent, controller):
+        tk.Frame.__init__(self, parent)
+        self.controller = controller
+
+        self.return_button = tk.Button(self, text="Go back", width=8,
+                                       command=lambda: controller.show_frame("OptionsPage"))
+        self.return_button.pack(side="top")
+
+        self.L = tk.Listbox(self, selectmode=tk.SINGLE)
+        self.images_dict = {}
+
+        self.controller.session.trace('w', self.display_pokedex)
+        self.controller.poke_amount.trace('w', self.display_pokedex)
+
+        self.L.pack()
+        self.img = tk.Label(self)
+        self.img.pack()
+        self.L.bind('<<ListboxSelect>>', self.list_entry_clicked)
+
+    def display_pokedex(self, *ignore):
+        self.L.delete(0, tk.END)
+        pokedex = cf.query_pokemon(self.controller.session.get())
+        for number in pokedex:
+            name = cf.get_pokemon_name(number)
+            image_path = cf.get_image(number)
+            gif = ImageTk.PhotoImage(Image.open(image_path))
+            self.images_dict[name] = gif
+            self.L.insert(tk.END, name)
+
+    def list_entry_clicked(self, *ignore):
+        pokemon_name = self.L.get(self.L.curselection()[0])
+        self.img.config(image=self.images_dict[pokemon_name])
 
 
 class CapturePage(tk.Frame):
@@ -157,6 +199,9 @@ class CapturePage(tk.Frame):
         Method to handle the behaviour of the capture pokemon button upon clicking.
         """
 
+        username = self.controller.session.get()
+        poke_amount = self.controller.poke_amount.get()
+
         rand_pokemon = randint(1, 151)
         path = cf.get_image(rand_pokemon)
         pok_name = cf.get_pokemon_name(rand_pokemon)
@@ -166,6 +211,9 @@ class CapturePage(tk.Frame):
         self.message.config(text="{0} captured!".format(pok_name))
         self.panel.config(image=img)
         self.panel.image = img
+
+        cf.capture(username, pok_name)
+        self.controller.poke_amount.set(poke_amount + 1)
 
 
 if __name__ == "__main__":
