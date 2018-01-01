@@ -141,6 +141,9 @@ class PokedexPage(tk.Frame):
                                        command=lambda: controller.show_frame("OptionsPage"))
         self.return_button.pack(side="top")
 
+        self.scrollbar = tk.Scrollbar(self)
+        self.scrollbar.pack(side='right', fill=tk.Y)
+
         self.L = tk.Listbox(self, selectmode=tk.SINGLE)
         self.images_dict = {}
 
@@ -151,6 +154,9 @@ class PokedexPage(tk.Frame):
         self.img = tk.Label(self)
         self.img.pack()
         self.L.bind('<<ListboxSelect>>', self.list_entry_clicked)
+
+        self.L.config(yscrollcommand=self.scrollbar.set)
+        self.scrollbar.config(command=self.L.yview)
 
     def display_pokedex(self, *ignore):
         self.L.delete(0, tk.END)
