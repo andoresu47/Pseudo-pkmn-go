@@ -46,7 +46,8 @@ class Application(tk.Tk):
         self.show_frame("StartPage")
 
     def show_frame(self, page_name):
-        '''Show a frame for the given page name'''
+        """Show a frame for the given page name"""
+
         frame = self.frames[page_name]
         frame.tkraise()
 
@@ -188,7 +189,7 @@ class CapturePage(tk.Frame):
         self.capture_button.pack(side="left")
 
         self.return_button = tk.Button(self, text="Go back", width=8,
-                                       command=lambda: controller.show_frame("OptionsPage"))
+                                       command=self.reset_view_and_return)
         self.return_button.pack(side="left")
 
         self.QUIT = tk.Button(self, text="Quit", fg='red', width=8, command=self.quit)
@@ -214,6 +215,18 @@ class CapturePage(tk.Frame):
 
         cf.capture(username, pok_name)
         self.controller.poke_amount.set(poke_amount + 1)
+
+    def reset_view_and_return(self):
+        three_up = os.path.abspath(os.path.join(__file__, "../../.."))
+        images_path = os.path.join(three_up, "images")
+
+        path = os.path.join(images_path, "qtn.png")
+        img = ImageTk.PhotoImage(Image.open(path))
+        self.message.config(text="A wild Pokemon appeared!")
+        self.panel.config(image=img)
+        self.panel.image = img
+
+        self.controller.show_frame("OptionsPage")
 
 
 if __name__ == "__main__":
