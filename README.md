@@ -23,7 +23,7 @@ pip install -r requirements.txt
 Load database schema:
 
 ```
-sudo -u postgres psql postgres -f schema.sql
+sudo -u postgres psql postgres -f ./src/db_stuff/schema.sql
 ```
 
 Upload test data to database:
