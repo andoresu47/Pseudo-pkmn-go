@@ -23,7 +23,7 @@ def populate_pokemon():
     three_up = os.path.abspath(os.path.join(__file__, "../../.."))
     images_path = os.path.join(three_up, "images")
 
-    df = pd.read_csv("../images/name_pokedex.csv", sep=',', header=None, index_col=0)
+    df = pd.read_csv(os.path.join(images_path, "name_pokedex.csv"), sep=',', header=None, index_col=0)
 
     for row in df.itertuples():
         index, pokemon = row
@@ -111,7 +111,7 @@ def login(username, password):
 
     except DatabaseException as e:
         print "Could not login."
-        raise UserNotRegisteredException()
+        return False
 
     finally:
         db_connection.disconnect()
@@ -216,9 +216,9 @@ def get_pokemon_name(nidpokemon):
 
 if __name__ == '__main__':
     # populate_pokemon()
-    # register_user("redes6", "pass6")
+    register_user("redes7", "pass7")
     # capture("redes2", "bulbasaur")
-    print query_pokemon("redes6")
+    # print query_pokemon("redes6")
     # print get_image(1)
     # print get_pokemon_name(1)
     # print login("redes6", "pass6")
