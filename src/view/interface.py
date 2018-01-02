@@ -145,11 +145,8 @@ class OptionsPage(tk.Frame):
                                    command=self.pokedex_option_clicked)
         pokedex_button.pack()
 
-        self.logout_button = tk.Button(self, text="Logout", width=8, command=self.logout)
-        self.logout_button.pack()
-
-        quit_button = tk.Button(self, text="Quit", fg='red', width=8, command=self.quit)
-        quit_button.pack(pady=(0, 10))
+        self.logout_button = tk.Button(self, text="Logout", fg='red', width=8, command=self.logout)
+        self.logout_button.pack(pady=(0, 10))
 
     def logout(self):
         """
@@ -249,19 +246,28 @@ class CapturePage(tk.Frame):
         # self.other_button = tk.Button(self, text="Other", width=7, command=self.capture_pokemon)
         # self.other_button.pack(side="left")
 
-        self.return_button = tk.Button(self, text="Go back", width=8,
+        self.return_button = tk.Button(self, text="Other", width=8,
                                        command=self.reset_view_and_return)
         self.return_button.pack(side="left")
 
-        self.QUIT = tk.Button(self, text="Quit", fg='red', width=8, command=self.quit)
+        self.QUIT = tk.Button(self, text="Logout", fg='red', width=8, command=self.logout)
         self.QUIT.pack(side="left")
 
-    def capture_pokemon(self):
+    def logout(self):
+        """
+        Method to show a pop up window upon logging out.
+        """
+        self.controller.show_frame("LoginPage")
+        self.controller.client.fin_sesion()
+        tm.showinfo("Logout info", "Logged out")
+
+    def capture_pokemon(self, rand_pokemon=None):
         """
         Method to handle the behaviour of the capture pokemon button upon clicking.
         """
 
-        rand_pokemon = self.controller.client.solicita_poke_c2()
+        if rand_pokemon is None:
+            rand_pokemon = self.controller.client.solicita_poke_c2()
         # path = cf.get_image(rand_pokemon)
         # pok_name = cf.get_pokemon_name(rand_pokemon)
 
@@ -269,6 +275,7 @@ class CapturePage(tk.Frame):
 
         if res[0] == 21:  # Not captured
             self.message.config(text="Pokemon not captured.")
+            self.capture_button.config(text="Retry", command=self.retry_pokemon)
 
         elif res[0] == 22:  # Captured!
             # Show received image
@@ -281,27 +288,57 @@ class CapturePage(tk.Frame):
 
             # Save image
             image.save(self.controller.images_path + str(rand_pokemon) + '.png')
+            self.capture_button.config(state="disabled")
             # Image gets constructed in res[1] and its size in res[2]
             # self.controller.client.poke_recibido_c8(True)
 
         elif res[0] == 23:  # se terminaron los reintentos
             self.message.config(text="Ran out of attempts")
 
+    def retry_pokemon(self):
+        res = self.controller.client.reintentar_captura_c6("si")
+
+        if res[0] == 21:  # Not captured
+            self.message.config(text="Pokemon not captured.")
+            # Abandon current capture and get another pokemon:
+            # idnvopok = self.controller.client.reintentar_captura_c6("no_Yreintento")
+            # self.return_button.config(text="Other", command=lambda: self.capture_pokemon())
+
+        elif res[0] == 22:  # Captured!
+            # Show received image
+            self.message.config(text="Pokemon captured!")
+            poke_id = res[1][0]
+            raw_data = res[1][1]
+            image = Image.open(io.BytesIO(raw_data))
+            img = ImageTk.PhotoImage(image)
+            self.panel.config(image=img)
+            self.panel.image = img
+
+            # Save image
+            image.save(self.controller.images_path + str(poke_id) + '.png')
+            self.capture_button.config(state="disabled")
+            # Image gets constructed in res[1] and its size in res[2]
+            # self.controller.client.poke_recibido_c8(True)
+
+        elif res[0] == 23:  # se terminaron los reintentos
+            self.reset_view_and_return()
+            tm.showinfo("Pokemon go", "Ran out of attempts!")
+
     def reset_view_and_return(self):
         """
         Method to reset the capture pokemon page to default view.
         """
 
-        three_up = os.path.abspath(os.path.join(__file__, "../../.."))
-        images_path = os.path.join(three_up, "images")
-
+        images_path = self.controller.images_path
         path = os.path.join(images_path, "qtn.png")
+
         img = ImageTk.PhotoImage(Image.open(path))
         self.message.config(text="A wild Pokemon appeared!")
         self.panel.config(image=img)
         self.panel.image = img
+        self.capture_button.config(text="Capture", command=self.capture_pokemon, state="normal")
 
-        self.controller.show_frame("OptionsPage")
+        self.controller.show_frame("CapturePage")
 
 
 if __name__ == "__main__":

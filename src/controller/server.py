@@ -43,7 +43,7 @@ class Client_Handler(threading.Thread):
 
         # FALTA OBTENER LOS SIGUIENTES DATOS DE LA DB
         self.pokid = random.randint(1, 151)
-        self.captureRate = 0.5
+        self.captureRate = 0.7
         self.intentos = 4
         # ES TODO
         return self.pokid
