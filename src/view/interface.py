@@ -178,8 +178,8 @@ class PokedexPage(tk.Frame):
         tk.Frame.__init__(self, parent)
         self.controller = controller
 
-        self.return_button = tk.Button(self, text="Go back", width=8,
-                                       command=lambda: controller.show_frame("OptionsPage"))
+        self.return_button = tk.Button(self, text="Go on adventure!", width=14,
+                                       command=lambda: controller.show_frame("CapturePage"))
         self.return_button.pack(side="top")
 
         self.scrollbar = tk.Scrollbar(self)
