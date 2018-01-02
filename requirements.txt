@@ -1,0 +1,4 @@
+passlib==1.7.1
+pandas==0.18.1
+psycopg2==2.7.1
+Pillow==5.0.0
