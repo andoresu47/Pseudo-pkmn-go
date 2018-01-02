@@ -287,7 +287,9 @@ class CapturePage(tk.Frame):
             self.panel.image = img
 
             # Save image
-            image.save(self.controller.images_path + str(rand_pokemon) + '.png')
+            images_path = self.controller.images_path
+            path = os.path.join(images_path, str(rand_pokemon) + '.png')
+            image.save(path)
             self.capture_button.config(state="disabled")
             # Image gets constructed in res[1] and its size in res[2]
             # self.controller.client.poke_recibido_c8(True)
