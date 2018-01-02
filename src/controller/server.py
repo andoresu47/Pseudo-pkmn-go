@@ -6,6 +6,7 @@ import threading
 import random
 import os
 from sets import Set
+import src.controller.controller_functions as cf
 
 
 # NOTAS
@@ -37,10 +38,11 @@ class Client_Handler(threading.Thread):
 
     def select_pokemon(self, response):
         """
-		Returns the pokemon id
-		"""
+        Returns the pokemon id
+        """
+
         # FALTA OBTENER LOS SIGUIENTES DATOS DE LA DB
-        self.pokid = random.randint(1, 25)
+        self.pokid = random.randint(1, 151)
         self.captureRate = 0.5
         self.intentos = 4
         # ES TODO
@@ -48,13 +50,13 @@ class Client_Handler(threading.Thread):
 
     def image_data(self):
         """
-		Returns [imgSize][image]
-		4 bytes for the image size and k for the image
-		"""
-        # FALTA OBTENER LOS SIGUIENTES DATOS DE LA BD Y GUARDAR QUE EL USUARIO ATRAPA A ESTE POKEMON
-        directory = sys.path[0] + '/'
-        fname = directory + 'pika.png'
-        # ES TODO
+        Returns [imgSize][image]
+        4 bytes for the image size and k for the image
+        """
+
+        fname = cf.get_image(self.pokid)
+        pok_name = cf.get_pokemon_name(self.pokid)
+        cf.capture(self.user, pok_name)
 
         # EJEMPLO DE OBTENER DE UN ARCHIVO
         img_size = 0
@@ -79,25 +81,25 @@ class Client_Handler(threading.Thread):
 
     def login(self, _user, _password):
         """
-		Function that manages the login given the user and password
-		"""
+        Function that manages the login given the user and password
+        """
+
         self.user = _user
         self.password = _password
-        # FALTA DECIDIR EXITO DEL LOGIN
-        exito = True
-        # ES TODO
+
+        exito = cf.login(self.user, self.password)
+
         return exito
 
     def query_pokedex(self):
         """
-		Returns a string, the first byte is the number of captured pokemons
-		Then follows as much bytes as pokemons the user has
-		"""
-        # FALTA OBTENER LOS SIGUIENTES DATOS DE LA BD
-        # Datos de prueba
-        num_pokemon = 4
-        pokedex = [1, 3, 5, 11]
-        # ES TODO
+        Returns a string, the first byte is the number of captured pokemons
+        Then follows as much bytes as pokemons the user has.
+        """
+
+        pokedex = cf.query_pokemon(self.user)
+        num_pokemon = len(pokedex)
+
         response = "" + chr(num_pokemon)
         for pok in pokedex:
             response += chr(pok)
@@ -318,12 +320,8 @@ class Server:
 
 
 if __name__ == "__main__":
-    directory = sys.path[0] + '/'
-    fname = directory + 'pika.png'
-    print fname
-
     HOST = socket.gethostname()
     PORT = 9999
-    server = Server(HOST, PORT);
+    server = Server(HOST, PORT)
 
     server.run()

@@ -204,7 +204,7 @@ class Cliente:
 
 if __name__ == '__main__':
     # CONECTA AL SERVER
-    cl = Cliente("MRJuanito", "Banana", socket.gethostname())
+    cl = Cliente("redes6", "pass6", socket.gethostname())
     # INCIA SESION y REVISA SI PUDO LOGGEARSE
     if cl.inicia_sesion_c0() == 0:
         print("error al iniciar sesión")
