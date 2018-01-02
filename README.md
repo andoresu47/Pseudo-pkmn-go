@@ -47,7 +47,17 @@ Run client (application):
 python -m src.view.interface
 ```
 
-You can run as many instances of client as you like. 
+You can run as many instances of client as you like.
+
+## Running
+
+Additionally, you can run the above commands via the included makefile.
+
+Initialize server example:
+
+```
+make install-server
+```
 
 ## Authors
 
