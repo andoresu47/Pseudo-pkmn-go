@@ -27,7 +27,7 @@ def populate_pokemon():
 
     for row in df.itertuples():
         index, pokemon = row
-        path = images_path + str(index) + ".png"
+        path = os.path.join(images_path, str(index) + ".png")
         db_connection.set_pokemon(pokemon.lower(), path)
 
     db_connection.disconnect()
