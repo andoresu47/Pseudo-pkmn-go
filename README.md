@@ -49,7 +49,7 @@ python -m src.view.interface
 
 You can run as many instances of client as you like.
 
-## Running
+## Makefile
 
 Additionally, you can run the above commands via the included makefile.
 
