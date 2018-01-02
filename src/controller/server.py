@@ -138,7 +138,7 @@ class Client_Handler(threading.Thread):
                 # RECHAZO
                 response = "" + chr(0)
                 seguir = True
-                self.estado = Server.ESTADOS["E9"]
+                self.estado = Server.ESTADOS["E11"]
 
         elif (self.estado == Server.ESTADOS["C2"] or self.estado == Server.ESTADOS["C6"] or self.estado ==
             Server.ESTADOS["E7"] or self.estado == Server.ESTADOS["C9"] or self.estado == Server.ESTADOS[
