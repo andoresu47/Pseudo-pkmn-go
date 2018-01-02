@@ -1,11 +1,11 @@
 import Tkinter as tk
+import io
+import socket
 import tkFont as tkfont
 import tkMessageBox as tm
-from random import randint
 import os
 from PIL import ImageTk, Image
-import src.controller.controller_functions as cf
-from src.controller.controller_functions import UserNotRegisteredException
+from src.controller.Cliente import Cliente
 
 
 class Application(tk.Tk):
@@ -23,6 +23,8 @@ class Application(tk.Tk):
         self.title_font = tkfont.Font(family='Helvetica', size=18, weight="bold", slant="italic")
         self.session = tk.StringVar()
         self.pokedex_accessed = tk.IntVar()
+        self.client = None
+        self.images_path = './client_images/'
 
         # the container is where we'll stack a bunch of frames
         # on top of each other, then the one we want visible
@@ -115,17 +117,14 @@ class LoginPage(tk.Frame):
         username = self.entry_1.get()
         password = self.entry_2.get()
 
-        try:
-            verif = cf.login(username, password)
-            if verif:
-                self.controller.show_frame("OptionsPage")
-                self.controller.session.set(username)
-                tm.showinfo("Login info", "Welcome {0}".format(username))
-            else:
-                tm.showerror("Login error", "Incorrect username or password")
+        self.controller.client = Cliente(username, password, socket.gethostname())
 
-        except UserNotRegisteredException as e:
-            tm.showerror("Login error", "Unregistered user.")
+        if self.controller.client.inicia_sesion_c0() != 0:
+            self.controller.show_frame("OptionsPage")
+            self.controller.session.set(username)
+            tm.showinfo("Login info", "Welcome {0}".format(username))
+        else:
+            tm.showerror("Login error", "Incorrect username or password")
 
 
 class OptionsPage(tk.Frame):
@@ -157,6 +156,7 @@ class OptionsPage(tk.Frame):
         Method to show a pop up window upon logging out.
         """
         self.controller.show_frame("LoginPage")
+        self.controller.client.fin_sesion()
         tm.showinfo("Logout info", "Logged out")
 
     def pokedex_option_clicked(self):
@@ -186,15 +186,15 @@ class PokedexPage(tk.Frame):
         self.scrollbar.pack(side='right', fill=tk.Y)
 
         self.L = tk.Listbox(self, selectmode=tk.SINGLE)
-        self.images_dict = {}
+        # self.images_dict = {}
 
         # self.controller.session.trace('w', self.display_pokedex)
         self.controller.pokedex_accessed.trace('w', self.display_pokedex)
 
         self.L.pack()
-        self.img = tk.Label(self)
-        self.img.pack()
-        self.L.bind('<<ListboxSelect>>', self.list_entry_clicked)
+        # self.img = tk.Label(self)
+        # self.img.pack()
+        # self.L.bind('<<ListboxSelect>>', self.list_entry_clicked)
 
         self.L.config(yscrollcommand=self.scrollbar.set)
         self.scrollbar.config(command=self.L.yview)
@@ -206,21 +206,21 @@ class PokedexPage(tk.Frame):
         """
 
         self.L.delete(0, tk.END)
-        pokedex = cf.query_pokemon(self.controller.session.get())
+        pokedex = self.controller.client.pokedex_c2()
         for number in pokedex:
-            name = cf.get_pokemon_name(number)
-            image_path = cf.get_image(number)
-            gif = ImageTk.PhotoImage(Image.open(image_path))
-            self.images_dict[name] = gif
-            self.L.insert(tk.END, name)
+            # name = cf.get_pokemon_name(number)
+            # image_path = cf.get_image(number)
+            # gif = ImageTk.PhotoImage(Image.open(image_path))
+            # self.images_dict[name] = gif
+            self.L.insert(tk.END, number)
 
-    def list_entry_clicked(self, *ignore):
-        """
-        Method to show the image corresponding to the selected pokemon from pokedex.
-        """
-
-        pokemon_name = self.L.get(self.L.curselection()[0])
-        self.img.config(image=self.images_dict[pokemon_name])
+    # def list_entry_clicked(self, *ignore):
+    #     """
+    #     Method to show the image corresponding to the selected pokemon from pokedex.
+    #     """
+    #
+    #     pokemon_name = self.L.get(self.L.curselection()[0])
+    #     self.img.config(image=self.images_dict[pokemon_name])
 
 
 class CapturePage(tk.Frame):
@@ -232,9 +232,7 @@ class CapturePage(tk.Frame):
         tk.Frame.__init__(self, parent)
         self.controller = controller
 
-        three_up = os.path.abspath(os.path.join(__file__, "../../.."))
-        images_path = os.path.join(three_up, "images")
-
+        images_path = self.controller.images_path
         path = os.path.join(images_path, "qtn.png")
 
         self.message = tk.Label(self, text="A wild Pokemon appeared!")
@@ -248,6 +246,9 @@ class CapturePage(tk.Frame):
         self.capture_button = tk.Button(self, text="Capture", width=8, command=self.capture_pokemon)
         self.capture_button.pack(side="left")
 
+        # self.other_button = tk.Button(self, text="Other", width=7, command=self.capture_pokemon)
+        # self.other_button.pack(side="left")
+
         self.return_button = tk.Button(self, text="Go back", width=8,
                                        command=self.reset_view_and_return)
         self.return_button.pack(side="left")
@@ -260,19 +261,31 @@ class CapturePage(tk.Frame):
         Method to handle the behaviour of the capture pokemon button upon clicking.
         """
 
-        username = self.controller.session.get()
+        rand_pokemon = self.controller.client.solicita_poke_c2()
+        # path = cf.get_image(rand_pokemon)
+        # pok_name = cf.get_pokemon_name(rand_pokemon)
 
-        rand_pokemon = randint(1, 151)
-        path = cf.get_image(rand_pokemon)
-        pok_name = cf.get_pokemon_name(rand_pokemon)
+        res = self.controller.client.capturar_poke_c4(0)
 
-        img = ImageTk.PhotoImage(Image.open(path))
+        if res[0] == 21:  # Not captured
+            self.message.config(text="Pokemon not captured.")
 
-        self.message.config(text="{0} captured!".format(pok_name))
-        self.panel.config(image=img)
-        self.panel.image = img
+        elif res[0] == 22:  # Captured!
+            # Show received image
+            self.message.config(text="Pokemon captured!")
+            raw_data = res[1][1]
+            image = Image.open(io.BytesIO(raw_data))
+            img = ImageTk.PhotoImage(image)
+            self.panel.config(image=img)
+            self.panel.image = img
 
-        cf.capture(username, pok_name)
+            # Save image
+            image.save(self.controller.images_path + str(rand_pokemon) + '.png')
+            # Image gets constructed in res[1] and its size in res[2]
+            # self.controller.client.poke_recibido_c8(True)
+
+        elif res[0] == 23:  # se terminaron los reintentos
+            self.message.config(text="Ran out of attempts")
 
     def reset_view_and_return(self):
         """
