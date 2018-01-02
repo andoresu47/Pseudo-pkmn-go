@@ -32,9 +32,10 @@ class DatabaseUpload:
         consoleHandler.setFormatter(formatter)
 
         self.log = logging.getLogger('proyecto2_redes')
+        self.log.propagate = False
         self.log.addHandler(hdlr)
-        self.log.addHandler(consoleHandler)
-        self.log.setLevel(logging.INFO)
+        # self.log.addHandler(consoleHandler)
+        self.log.setLevel(logging.DEBUG)
 
     def connect(self):
         """Method in charge of connecting to the database "market_data".
