@@ -207,7 +207,7 @@ def get_pokemon_name(nidpokemon):
     try:
         return db_connection.get_pokemon_from_id(nidpokemon).title()
 
-    except DatabaseException as e:
+    except Exception as e:
         print "Could not get pokemon."
 
     finally:
