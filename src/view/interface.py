@@ -24,7 +24,7 @@ class Application(tk.Tk):
         self.session = tk.StringVar()
         self.pokedex_accessed = tk.IntVar()
         self.client = None
-        self.images_path = './client_images/'
+        self.images_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'client_images')
 
         # the container is where we'll stack a bunch of frames
         # on top of each other, then the one we want visible
