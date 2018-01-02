@@ -6,7 +6,7 @@ import threading
 import random
 import os
 from sets import Set
-import src.controller.controller_functions as cf
+import controller_functions as cf
 
 
 # NOTAS
