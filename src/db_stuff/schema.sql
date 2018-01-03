@@ -12,7 +12,7 @@ grant all privileges on database proyecto2redes to redes;
 CREATE TABLE Pokemon(
 	nIdpokemon	SERIAL						,
 	nombre		VARCHAR(64)			NOT NULL,
-	imagen		VARCHAR(128)				,
+	imagen		VARCHAR(256)				,
 	CONSTRAINT pk_pokemon PRIMARY KEY (nIdpokemon),
 	CONSTRAINT unq_pokemon UNIQUE (nombre)
 );
