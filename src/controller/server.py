@@ -260,7 +260,7 @@ class Client_Handler(threading.Thread):
 
 
 class Server:
-    TIMEOUT = 30
+    TIMEOUT = 300
     QUEUE_SIZE = 50
     BUFFER_SIZE = 1024
 
