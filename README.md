@@ -50,16 +50,40 @@ python -m src.view.interface
 ### Notes
 
 * You can run as many instances of client as you like.
-* Client file `<interface.py>` accepts `<ip_address, port>` command line arguments.
+* Client file `interface.py` accepts `<ip_address, port>` command line arguments.
 
 ## Makefile
 
 Additionally, you can run the above commands via the included makefile.
 
-Initialize server example:
+Install required python packages:
+
+```
+make install-requirements
+```
+
+Initialize server:
 
 ```
 make install-server
+```
+
+Generate documentation:
+
+```
+make generate-doc
+```
+
+Run server:
+
+```
+make run-server
+```
+
+Run client:
+
+```
+make run-client
 ```
 
 ## Authors
