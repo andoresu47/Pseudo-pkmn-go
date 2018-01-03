@@ -47,7 +47,10 @@ Run client (application):
 python -m src.view.interface
 ```
 
-You can run as many instances of client as you like.
+### Notes
+
+* You can run as many instances of client as you like.
+* Client file `<interface.py>` accepts `<ip_address, port>` command line arguments.
 
 ## Makefile
 
