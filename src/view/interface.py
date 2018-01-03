@@ -4,6 +4,7 @@ import socket
 import tkFont as tkfont
 import tkMessageBox as tm
 import os
+import sys
 from PIL import ImageTk, Image
 from src.controller.Cliente import Cliente
 
@@ -13,13 +14,15 @@ class Application(tk.Tk):
     Class to handle the GUI of the application.
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, address, port, *args, **kwargs):
         """
         Class constructor.
         """
 
         tk.Tk.__init__(self, *args, **kwargs)
 
+        self.address = address
+        self.port = port
         self.title_font = tkfont.Font(family='Helvetica', size=18, weight="bold", slant="italic")
         self.session = tk.StringVar()
         self.pokedex_accessed = tk.IntVar()
@@ -118,7 +121,7 @@ class LoginPage(tk.Frame):
         username = self.entry_1.get()
         password = self.entry_2.get()
 
-        self.controller.client = Cliente(username, password, socket.gethostname())
+        self.controller.client = Cliente(username, password, self.controller.address, self.controller.port)
 
         if self.controller.client.inicia_sesion_c0() != 0:
             self.controller.show_frame("OptionsPage")
@@ -347,5 +350,12 @@ class CapturePage(tk.Frame):
 
 
 if __name__ == "__main__":
-    app = Application()
+    if len(sys.argv) > 1:
+        address = sys.argv[1]
+        port = sys.argv[2]
+    else:
+        address = socket.gethostname()
+        port = 9999
+
+    app = Application(address, int(port))
     app.mainloop()
