@@ -24,7 +24,8 @@ class Application(tk.Tk):
         self.session = tk.StringVar()
         self.pokedex_accessed = tk.IntVar()
         self.client = None
-        self.images_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'client_images')
+
+        self.images_path = os.path.join(os.path.abspath(os.path.join(__file__, "../../..")), 'client_images')
 
         # the container is where we'll stack a bunch of frames
         # on top of each other, then the one we want visible
@@ -317,7 +318,9 @@ class CapturePage(tk.Frame):
             self.panel.image = img
 
             # Save image
-            image.save(self.controller.images_path + str(poke_id) + '.png')
+            images_path = self.controller.images_path
+            path = os.path.join(images_path, str(poke_id) + '.png')
+            image.save(path)
             self.capture_button.config(state="disabled")
             # Image gets constructed in res[1] and its size in res[2]
             # self.controller.client.poke_recibido_c8(True)
